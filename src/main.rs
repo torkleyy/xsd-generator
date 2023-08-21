@@ -248,7 +248,6 @@ fn generate_struct(
         let xml_name = &elem.name;
         let rs_name = to_snake_case(&elem.name);
         let ty_name = elem.rs_type_name();
-        dbg!((&elem.name, elem.min_occurs));
         if let Some(min_occurs) = elem.min_occurs {
             if min_occurs == 0 {
                 let _ = writeln!(f, "#[serde(default)]");
@@ -368,6 +367,11 @@ fn to_snake_case(input: &str) -> String {
             result.push(c);
         }
         prev_char = c;
+    }
+
+    // TODO: other keywords
+    if result == "type" {
+        result.insert_str(0, "r#");
     }
 
     result
