@@ -12,6 +12,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let mut buf = String::new();
 
+    buf.push_str("use serde::{Deserialize, Serialize};");
+
     for ty in xsd_schema.complex_types {
         generate_complex(ty, &mut buf);
     }
