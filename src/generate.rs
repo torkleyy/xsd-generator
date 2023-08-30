@@ -17,11 +17,31 @@ pub fn generate_element(elem: XsdElement, f: &mut String) {
 pub fn generate_complex(ty: XsdComplexType, f: &mut String) {
     let name = to_pascal_case(&ty.name.unwrap());
 
-    if let Some(all) = ty.all {
+    if let Some(mut all) = ty.all {
+        if let Some(tl_min) = all.min_occurs {
+            all.elements.iter_mut().for_each(|el| {
+                el.min_occurs = Some(
+                    el.min_occurs
+                        .map(|el_min| tl_min * el_min)
+                        .unwrap_or(tl_min),
+                )
+            })
+        }
+
         generate_struct(&name, all.elements, ty.attributes, None, f);
     } else if let Some(_choice) = ty.choice {
         unimplemented!()
-    } else if let Some(seq) = ty.sequence {
+    } else if let Some(mut seq) = ty.sequence {
+        if let Some(tl_min) = seq.min_occurs {
+            seq.elements.iter_mut().for_each(|el| {
+                el.min_occurs = Some(
+                    el.min_occurs
+                        .map(|el_min| tl_min * el_min)
+                        .unwrap_or(tl_min),
+                )
+            })
+        }
+
         generate_struct(&name, seq.elements, ty.attributes, None, f);
     } else if let Some(simple) = ty.simple_content {
         generate_struct(

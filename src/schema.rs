@@ -78,6 +78,8 @@ pub enum XsdUse {
 pub struct Sequence {
     #[serde(rename = "element")]
     pub elements: Vec<XsdElement>,
+    #[serde(rename = "@minOccurs")]
+    pub min_occurs: Option<i64>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -91,6 +93,8 @@ pub struct Choice {
 pub struct All {
     #[serde(rename = "element")]
     pub elements: Vec<XsdElement>,
+    #[serde(rename = "@minOccurs")]
+    pub min_occurs: Option<i64>,
 }
 
 #[derive(Debug, Deserialize)]
