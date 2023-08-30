@@ -18,11 +18,19 @@ pub fn generate_complex(ty: XsdComplexType, f: &mut String) {
     let name = to_pascal_case(&ty.name.unwrap());
 
     if let Some(all) = ty.all {
-        generate_struct(&name, all.elements, ty.attributes, f);
+        generate_struct(&name, all.elements, ty.attributes, None, f);
     } else if let Some(_choice) = ty.choice {
         unimplemented!()
     } else if let Some(seq) = ty.sequence {
-        generate_struct(&name, seq.elements, ty.attributes, f);
+        generate_struct(&name, seq.elements, ty.attributes, None, f);
+    } else if let Some(simple) = ty.simple_content {
+        generate_struct(
+            &name,
+            vec![],
+            simple.extension.attributes,
+            Some(simple.extension.base),
+            f,
+        );
     }
 }
 
@@ -76,6 +84,7 @@ pub fn generate_struct(
     name: &str,
     elements: Vec<XsdElement>,
     attribs: Vec<XsdAttribute>,
+    content: Option<String>,
     f: &mut String,
 ) {
     let _ = writeln!(f, "#[derive(Clone, Debug, Deserialize, Serialize)]");
@@ -104,6 +113,12 @@ pub fn generate_struct(
         }
         let _ = writeln!(f, "#[serde(rename = \"{xml_name}\")]");
         let _ = writeln!(f, "pub {rs_name}: {ty_name},");
+    }
+
+    if let Some(content) = &content {
+        let rs_type = map_primitive_to_rust_type(content);
+        let _ = writeln!(f, "#[serde(rename = \"$value\")]");
+        let _ = writeln!(f, "pub value: {rs_type},");
     }
 
     let _ = writeln!(f, "}}");

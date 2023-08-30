@@ -42,6 +42,8 @@ pub struct XsdComplexType {
     pub choice: Option<Choice>,
     #[serde(rename = "all")]
     pub all: Option<All>,
+    #[serde(rename = "simpleContent")]
+    pub simple_content: Option<SimpleContent>,
     #[serde(rename = "attribute")]
     #[serde(default)]
     pub attributes: Vec<XsdAttribute>,
@@ -89,6 +91,19 @@ pub struct Choice {
 pub struct All {
     #[serde(rename = "element")]
     pub elements: Vec<XsdElement>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct SimpleContent {
+    pub extension: SimpleContentExtension,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct SimpleContentExtension {
+    #[serde(rename = "@base")]
+    pub base: String,
+    #[serde(rename = "attribute")]
+    pub attributes: Vec<XsdAttribute>,
 }
 
 #[derive(Debug, Deserialize)]
