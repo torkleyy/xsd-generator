@@ -5,7 +5,7 @@ impl XsdElement {
         let base_name = if self.complex_type.is_some() || self.simple_type.is_some() {
             to_pascal_case(&self.name)
         } else {
-            map_to_rust_type(self.data_type.as_ref().unwrap())
+            map_to_rust_type(self.data_type.as_ref().map(String::as_str).unwrap_or("xs:string"))
         };
 
         if let Some(max_occurs) = &self.max_occurs {
