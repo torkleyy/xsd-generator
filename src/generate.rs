@@ -86,14 +86,14 @@ pub fn generate_simple(ty: XsdSimpleType, f: &mut String) {
             // see https://docs.rs/quick-xml/latest/quick_xml/de/#enumunit-variants-as-a-text
             let snake_name = to_snake_case(&name);
             let _ = writeln!(f, "#[derive(Clone, Debug, Deserialize, Serialize)]");
-            let _ = writeln!(f, "pub struct {name}EnumWrapper {{");
+            let _ = writeln!(f, "pub struct {name} {{");
             let _ = writeln!(f, "#[serde(rename = \"{xml_ty_name}\")]");
             let _ = writeln!(f, "{snake_name}: {name},");
             let _ = writeln!(f, "}}");
 
             let rs_type = name;
             let _ = writeln!(f, "#[derive(Clone, Debug, Deserialize, Serialize)]");
-            let _ = writeln!(f, "pub enum {rs_type} {{");
+            let _ = writeln!(f, "pub enum {rs_type}Enum {{");
             for v in en {
                 let xml_name = &v.value;
                 let v_ident = to_pascal_case(xml_name);
