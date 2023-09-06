@@ -97,7 +97,16 @@ pub fn to_pascal_case(input: &str) -> String {
                 result.push(c.to_ascii_uppercase());
                 capitalize_next = false;
             } else {
-                result.push(c.to_ascii_lowercase());
+                if result
+                    .chars()
+                    .last()
+                    .map(|c| c.is_ascii_uppercase())
+                    .unwrap_or(false)
+                {
+                    result.push(c.to_ascii_lowercase());
+                } else {
+                    result.push(c);
+                }
             }
         }
     }
