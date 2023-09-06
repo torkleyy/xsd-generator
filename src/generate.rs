@@ -88,7 +88,7 @@ pub fn generate_simple(ty: XsdSimpleType, f: &mut String) {
             let _ = writeln!(f, "#[derive(Clone, Debug, Deserialize, Serialize)]");
             let _ = writeln!(f, "pub struct {name} {{");
             let _ = writeln!(f, "#[serde(rename = \"{xml_ty_name}\")]");
-            let _ = writeln!(f, "{snake_name}: {name},");
+            let _ = writeln!(f, "pub {snake_name}: {name}Enum,");
             let _ = writeln!(f, "}}");
 
             let rs_type = name;
