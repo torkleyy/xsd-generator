@@ -89,26 +89,27 @@ pub fn to_pascal_case(input: &str) -> String {
     let mut result = String::new();
     let mut capitalize_next = true;
 
-    for c in input.chars() {
-        if c == '_' || c == '-' {
-            capitalize_next = true;
-        } else if c.is_ascii_alphanumeric() {
-            if capitalize_next {
-                result.push(c.to_ascii_uppercase());
-                capitalize_next = false;
-            } else {
-                if result
-                    .chars()
-                    .last()
-                    .map(|c| c.is_ascii_uppercase())
-                    .unwrap_or(false)
-                {
-                    result.push(c.to_ascii_lowercase());
+    if input.contains('_')
+        || input.contains('-')
+        || input
+            .chars()
+            .all(|c| !c.is_alphabetic() || c.is_ascii_uppercase())
+    {
+        for c in input.chars() {
+            if c == '_' || c == '-' {
+                capitalize_next = true;
+            } else if c.is_ascii_alphanumeric() {
+                if capitalize_next {
+                    result.push(c.to_ascii_uppercase());
+                    capitalize_next = false;
                 } else {
-                    result.push(c);
+                    result.push(c.to_ascii_lowercase());
                 }
             }
         }
+        result = to_pascal_case(&result);
+    } else {
+        result = input.to_owned();
     }
 
     result

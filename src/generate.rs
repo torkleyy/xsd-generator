@@ -69,7 +69,8 @@ pub fn generate_attribute(prefix: &str, attr: XsdAttribute, f: &mut String) {
 }
 
 pub fn generate_simple(ty: XsdSimpleType, f: &mut String) {
-    let name = to_pascal_case(&ty.name.unwrap());
+    let xml_ty_name = ty.name.unwrap();
+    let name = to_pascal_case(&xml_ty_name);
 
     if let Some(restr) = ty.restriction {
         if let Some(en) = restr.enumeration.filter(|en| {
@@ -81,7 +82,16 @@ pub fn generate_simple(ty: XsdSimpleType, f: &mut String) {
                     .unwrap_or(false)
             })
         }) {
-            let rs_type = map_to_rust_type(&restr.base);
+            // we need to create a wrapper struct
+            // see https://docs.rs/quick-xml/latest/quick_xml/de/#enumunit-variants-as-a-text
+            let snake_name = to_snake_case(&name);
+            let _ = writeln!(f, "#[derive(Clone, Debug, Deserialize, Serialize)]");
+            let _ = writeln!(f, "pub enum {name}EnumWrapper {{");
+            let _ = writeln!(f, "#[serde(rename = \"{xml_ty_name}\")");
+            let _ = writeln!(f, "{snake_name}: {name},");
+            let _ = writeln!(f, "}}");
+
+            let rs_type = name;
             let _ = writeln!(f, "#[derive(Clone, Debug, Deserialize, Serialize)]");
             let _ = writeln!(f, "pub enum {rs_type} {{");
             for v in en {
