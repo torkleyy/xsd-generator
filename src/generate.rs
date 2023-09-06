@@ -88,7 +88,7 @@ pub fn generate_simple(ty: XsdSimpleType, f: &mut String) {
                 let xml_name = &v.value;
                 let v_ident = to_pascal_case(xml_name);
                 let _ = writeln!(f, "#[serde(rename = \"{xml_name}\")]");
-                let _ = writeln!(f, "{v_ident}");
+                let _ = writeln!(f, "{v_ident},");
             }
             let _ = writeln!(f, "}}");
         } else {

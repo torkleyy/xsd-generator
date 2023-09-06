@@ -5,7 +5,12 @@ impl XsdElement {
         let base_name = if self.complex_type.is_some() || self.simple_type.is_some() {
             to_pascal_case(&self.name)
         } else {
-            map_to_rust_type(self.data_type.as_ref().map(String::as_str).unwrap_or("xs:string"))
+            map_to_rust_type(
+                self.data_type
+                    .as_ref()
+                    .map(String::as_str)
+                    .unwrap_or("xs:string"),
+            )
         };
 
         if let Some(max_occurs) = &self.max_occurs {
@@ -92,7 +97,7 @@ pub fn to_pascal_case(input: &str) -> String {
                 result.push(c.to_ascii_uppercase());
                 capitalize_next = false;
             } else {
-                result.push(c);
+                result.push(c.to_ascii_lowercase());
             }
         }
     }
