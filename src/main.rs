@@ -1,4 +1,6 @@
-use std::fs;
+use clap::Parser;
+
+use std::{fs, path::PathBuf};
 
 use self::{generate::*, schema::*, types::*};
 
@@ -6,8 +8,20 @@ mod generate;
 mod schema;
 mod types;
 
+/// xsd-generator
+#[derive(Parser, Debug)]
+#[command(version, about, long_about = None)]
+struct Args {
+    /// XSD file to read
+    input: PathBuf,
+
+    /// Rust file to write
+    output: PathBuf,
+}
+
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let xml_content = fs::read_to_string("schema.xsd")?;
+    let args = Args::parse();
+    let xml_content = fs::read_to_string(args.in)?;
     let xsd_schema: XsdSchema = quick_xml::de::from_str(&xml_content)?;
 
     let mut buf = String::new();
@@ -26,7 +40,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         generate_element(elem, &mut buf);
     }
 
-    println!("{buf}");
+    // println!("{buf}");
+    fs::write(args.output, buf);
 
     Ok(())
 }
