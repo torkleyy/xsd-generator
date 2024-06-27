@@ -21,7 +21,7 @@ struct Args {
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Args::parse();
-    let xml_content = fs::read_to_string(args.in)?;
+    let xml_content = fs::read_to_string(args.input)?;
     let xsd_schema: XsdSchema = quick_xml::de::from_str(&xml_content)?;
 
     let mut buf = String::new();
@@ -41,7 +41,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     // println!("{buf}");
-    fs::write(args.output, buf);
+    fs::write(args.output, buf)?;
 
     Ok(())
 }
